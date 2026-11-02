@@ -1,6 +1,8 @@
 # 测试目录
 
-测试按功能划分，可以离线运行；游戏手柄、官方 IK 及转换相关测试需要安装随仓库提供的 LeRobot 和 `gamepad,dev` 依赖：
+测试按功能划分，可以离线运行；游戏手柄、官方 IK 及转换相关测试需要安装随仓库提供的 LeRobot 和 `gamepad,dev` 依赖。
+在项目根目录执行 `uv sync --frozen --python 3.12 --extra gamepad --extra dev` 即可安装。
+测试不依赖历史采集数据或训练权重；相机渲染测试需要可用的离屏图形上下文。
 
 - `test_model.py`：场景与模型加载。
 - `test_folded_ready.py`：起始 keyframe 姿态。

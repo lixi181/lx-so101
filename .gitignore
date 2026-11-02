@@ -40,3 +40,19 @@ scripts/chat_aicoding.py
 # Small fixture required by test_hf868_scene.py
 /results/*
 !/results/extrinsics_hf868.json
+
+# Machine-specific tools, deployment notes and historical metadata
+/md/
+/remote_staging/
+scripts/verify_history_calib.py
+/references/project_metadata/notes/
+/references/project_metadata/calibration/
+/references/project_metadata/third_party_notes/
+/references/project_metadata/outputs_archive/
+/references/project_metadata/configs/follower.json
+/references/project_metadata/configs/leader.json
+/references/project_metadata/configs/so101_mujoco.yaml
+/references/lerobot_mujoco_sim/
+/references/pick-101/
+/references/mujoco_menagerie/
+/references/lerobot-wam/

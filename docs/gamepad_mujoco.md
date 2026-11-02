@@ -1,14 +1,15 @@
-> 开发版说明：本文件保留此前接入时的参数与验证记录；所述 results/ 历史报告未随精简版分发，当前交付验证见 [开发版说明](development_delivery.md)。
-
 # 本机 F310 → 官方 LeRobot IK → MuJoCo
 
 默认启动模式为 `official`。本入口仅控制本机 MuJoCo，不打开机械臂串口、相机或远端连接。
 真实 F310 的只读输入和报文兼容已经验证；本轮官方处理链接入只做离线测试，没有打开窗口。
+LeRobot 源码随仓库提供；安装命令见 [项目首页](../README.md#安装与环境)。
+下文引用的历史 results/ 报告未随开发版分发，交付验证见 [开发版说明](development_delivery.md)。
 
 ## 启动
 
+在项目根目录执行：
+
 ```bash
-cd lx-so101
 ./.venv/bin/python scripts/teleoperate_gamepad.py --ik official
 ```
 

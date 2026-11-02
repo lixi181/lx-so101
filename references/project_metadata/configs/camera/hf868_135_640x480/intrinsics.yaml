@@ -56,6 +56,7 @@ derived:
   principal_point_offset_px: [-0.3, 9.2]
 
 provenance:
+  # 使用通用归档位置记录来源；真实机器路径不作为克隆或运行依赖。
   source_path: "original-calibration:/ros_workspace/usb_cam/cam_info/HF868_135/640_480/ost.yaml"
   source_tarball: "original-calibration:/camera_info/HF868_135/calibrationdata.tar.gz"
   calibrated_on: "2025-06-05"
