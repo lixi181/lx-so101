@@ -24,6 +24,8 @@ uv sync --frozen --python 3.12 --extra gamepad --extra dev
 后续命令均在仓库根目录执行。依赖按 [uv.lock](uv.lock) 固定；
 LeRobot 0.6.1 源码已包含在 `third_party/lerobot_v061/`，安装不依赖原机器路径或额外的 Git worktree。
 Placo、Pinocchio 和对应 cmeel ABI 版本也在锁文件中，重新安装时应保留这套锁定组合。
+运行官方手柄 IK、数据转换或 ACT 时需要安装 LeRobot；上述命令会一并完成安装，
+无需另外克隆或手动安装一个 LeRobot 仓库。`.venv` 由对方本机创建，不随 Git 仓库分发。
 
 ## 启动
 
