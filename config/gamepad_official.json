@@ -1,0 +1,13 @@
+{
+  "fps": 30,
+  "inverse_kinematics": {
+    "urdf_path": "models/so101/so101_new_calib.urdf",
+    "target_frame_name": "gripper_frame_link",
+    "end_effector_bounds": {
+      "min": [-1.0, -1.0, -1.0],
+      "max": [1.0, 1.0, 1.0]
+    },
+    "end_effector_step_sizes": {"x": 0.02, "y": 0.02, "z": 0.02}
+  },
+  "max_gripper_pos": 100.0
+}

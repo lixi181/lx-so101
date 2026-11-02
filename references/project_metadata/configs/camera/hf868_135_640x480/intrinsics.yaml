@@ -1,0 +1,82 @@
+# HF868 135° 广角 USB 相机 @ 640x480 内参
+#
+# 这是一份「标注过的」副本，数值与同目录 ost.yaml 完全一致；ost.yaml 是 ROS
+# usb_cam 直接消费的原始格式，本文件用于人读和程序加载（多出来的是溯源信息）。
+# 两者的一致性由 tests/test_camera_model.py 守住，改一边忘了改另一边会测试失败。
+#
+# 这台相机原为叉车上拍摄托盘二维码的相机（forklift_pallet_cam.launch，
+# 设备 /dev/forklift_artag_camera），现用作 SO-101 机械臂的顶部相机。
+# 内参与安装位置无关，挪位置不需要重新标定；但换到新用途后仍缺外参（见文末）。
+
+device:
+  vendor_id: 0x05a3
+  product_id: 0x9240
+  usb_name: "ARtag USB Camera"
+  v4l2_name: "/dev/video0"
+  udev_symlink: "/dev/forklift_artag_camera"
+  note: >-
+    udev 规则（/etc/udev/rules.d/forklift_camera.rules）当前缺少 ATTR{index}=="0"
+    过滤，导致同一台相机的 video1（Metadata Capture）覆盖 video0（采集），
+    符号链接会指向不可取图的节点。使用时如遇 VIDIOC_G_FMT 失败，直接改用 /dev/video0。
+
+model:
+  # 目录名 HF868_135 是历史命名，来自 2025-06-05 那次标定。仓库里存在命名错位
+  # （usb_cam/cam_info/HF868_90/640_480 实际装的是 HF868_90_2 的数据），
+  # 所以机身型号应以物理标签为准，不要凭目录名反推。
+  name: HF868
+  lens: "135 deg wide angle"
+  distortion_model: plumb_bob
+
+resolution:
+  width: 640
+  height: 480
+  # 该分辨率下 YUYV 只支持 30.5 fps，MJPG 才支持 120 fps。
+  # 叉车 launch 里写的 yuyv + 60/120 fps 超出驱动支持范围。
+  fps_yuyv_max: 30.5
+  fps_mjpg_max: 120.1
+
+intrinsics:
+  fx: 326.68129
+  fy: 326.27539
+  cx: 319.20034
+  cy: 248.66437
+
+distortion:
+  # plumb_bob: k1 k2 p1 p2 k3
+  k1: -0.012865
+  k2: -0.018761
+  p1: 0.002971
+  p2: -0.001267
+  k3: 0.0
+
+derived:
+  hfov_deg: 88.8
+  vfov_deg: 72.7
+  fx_fy_mismatch_pct: 0.12
+  principal_point_offset_px: [-0.3, 9.2]
+
+provenance:
+  source_path: "original-calibration:/ros_workspace/usb_cam/cam_info/HF868_135/640_480/ost.yaml"
+  source_tarball: "original-calibration:/camera_info/HF868_135/calibrationdata.tar.gz"
+  calibrated_on: "2025-06-05"
+  tool: "ROS camera_calibration (cameracalibrator.py)"
+  checkerboard: "8x11 squares -> 7x10 inner corners"
+  views: 71
+  rms_reprojection_px: 0.55
+  verification: >-
+    2026-10-20 用该 tar 包自带的 71 张原始图片独立重新求解，
+    fx=326.727 fy=326.332 cx=319.239 cy=248.715，与 ost.yaml 相差
+    dfx=+0.05 dfy=+0.06 dcx=+0.04 dcy=+0.05 px，RMS=0.550px。
+    它是 原标定归档目录 下唯一能自洽复现的一组。
+  quality_verdict: "可信"
+  siblings_rejected:
+    - "HF868_90/640_480: 重解 fx 比 ost.yaml 低 12.2px，不一致"
+    - "HF868_90_1/640_480: 与 HF868_90/640_480 数值完全相同，是拷贝"
+    - "HF868_90_2/640_480: 重解 fx 比 ost.yaml 低 20.8px，不一致"
+    - "所有 1280x720 包: 无法检出 7x10/8x11 角点，不可用"
+
+caveats:
+  - "只有 640x480 一组标定。要跑 1280x720 必须重新标定。"
+  - "cx 比图像中心 (319.5) 偏 -0.3px、cy 比 (239.5) 偏 +9.2px，属正常范围。"
+  - "叉车 apriltag_ros/single_image_client.launch 里另有一组硬编码内参 fx=652.79，与本文不一致，勿混用。"
+  - "内参不含外参：像素到机械臂基座坐标仍需手眼标定。"

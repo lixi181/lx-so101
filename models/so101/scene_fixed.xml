@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SO-101 第一版固定抓取场景：固定桌面、cube、target_box、front_camera、wrist_camera 和 light。 -->
+<mujoco model="so101_scene_fixed">
+  <include file="so101_new_calib_camera_render.xml"/>
+
+  <!-- timestep = 1/480 s：real_safe 的 physics_per_tick=16，控制周期恰好 1/30 s（30 Hz）。
+       这个十进制写法解析成双精度后 16×timestep 正好等于 1/30 的双精度表示，
+       因此采样率是精确的 30.0 而不是 29.999…。 -->
+  <option timestep="0.0020833333333333333" gravity="0 0 -9.81" cone="elliptic" impratio="10"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="160" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0"
+      width="512" height="3072"/>
+    <texture type="2d" name="table_texture" builtin="checker" mark="edge"
+      rgb1="0.32 0.36 0.42" rgb2="0.16 0.20 0.26" markrgb="0.8 0.8 0.8"
+      width="300" height="300"/>
+    <material name="table_material" texture="table_texture" texuniform="true"
+      texrepeat="4 4" reflectance="0.15"/>
+    <material name="cube_material" rgba="0.85 0.12 0.08 1"/>
+    <material name="target_material" rgba="0.10 0.35 0.90 0.35"/>
+  </asset>
+
+  <worldbody>
+    <!-- 固定桌面：顶面高度为 0 m，与 SO-101 基座底面保持一致。 -->
+    <geom name="table" type="box" pos="0 0 -0.025" size="0.45 0.35 0.025"
+      material="table_material"/>
+
+    <!-- 固定前视相机，参考 ICL-so101 的 front camera 放置方式。
+         fovy=35（原为 45）：方块投影单边从 12.2 px 提到 16.0 px，距 12 px 阈值有余量；
+         位置和朝向不动。再收紧（如 fovy 32 以下）会开始裁掉手臂顶部，见 README
+         的「图像分辨率与相机取景」。相机不参与物理，改 fovy 只影响渲染。 -->
+    <camera name="front_camera" pos="0.75 0 0.45"
+      xyaxes="0 1 0 -0.5 0 1" fovy="35"/>
+
+    <light name="key_light" pos="0 0 1.2" dir="0 0 -1" directional="true"/>
+
+    <!-- 固定 cube：底面约位于桌面顶面，后续 reset 阶段再改为按 seed 采样。 -->
+    <body name="cube" pos="0.25 0.00 0.015">
+      <freejoint name="cube_freejoint"/>
+      <geom name="cube_geom" type="box" size="0.015 0.015 0.015"
+        mass="0.02" condim="4" friction="1.0 0.005 0.0001"
+        solimp="0.99 0.99 0.001" solref="0.01 1" material="cube_material"/>
+    </body>
+
+    <!-- 固定目标盒：外部尺寸约 0.12 x 0.12 m，暂不随机化。 -->
+    <body name="target_box" pos="0.04 0.18 0.005">
+      <geom name="target_box_floor" type="box" pos="0 0 0" size="0.06 0.06 0.005"
+        material="target_material" friction="1.0 0.005 0.0001" contype="1" conaffinity="1"/>
+      <geom name="target_box_wall_x1" type="box" pos="0.055 0 0.025" size="0.005 0.06 0.025"
+        material="target_material" contype="1" conaffinity="1"/>
+      <geom name="target_box_wall_x2" type="box" pos="-0.055 0 0.025" size="0.005 0.06 0.025"
+        material="target_material" contype="1" conaffinity="1"/>
+      <geom name="target_box_wall_y1" type="box" pos="0 0.055 0.025" size="0.06 0.005 0.025"
+        material="target_material" contype="1" conaffinity="1"/>
+      <geom name="target_box_wall_y2" type="box" pos="0 -0.055 0.025" size="0.06 0.005 0.025"
+        material="target_material" contype="1" conaffinity="1"/>
+    </body>
+  </worldbody>
+
+  <!-- Ubuntu 项目的 folded_ready 起始姿态。
+       qpos 顺序：6 个机械臂/夹爪关节、cube freejoint(3+4)。 -->
+  <keyframe>
+    <key name="folded_ready"
+      qpos="-0.0187914029 -1.6800000000 1.5600000000 1.1800000000 0.0000000000 0.0000000000 0.2500000000 0.0000000000 0.0150000000 1.0000000000 0.0000000000 0.0000000000 0.0000000000"
+      ctrl="-0.0187914029 -1.6800000000 1.5600000000 1.1800000000 0.0000000000 0.0000000000"/>
+  </keyframe>
+</mujoco>

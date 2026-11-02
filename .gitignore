@@ -1,0 +1,42 @@
+# Local environments and caches
+.venv*/
+.uv-cache/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+.DS_Store
+.tmp*/
+
+# Credentials and local settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+api.txt
+scripts/chat_aicoding.py
+
+# Generated data; retain format documentation and empty directory markers
+/datasets/*
+!/datasets/raw/
+/datasets/raw/*
+!/datasets/raw/README.md
+!/datasets/raw/.gitkeep
+!/datasets/processed/
+/datasets/processed/*
+!/datasets/processed/.gitkeep
+!/datasets/evaluation/
+/datasets/evaluation/*
+!/datasets/evaluation/.gitkeep
+/outputs/
+/samples/
+/experiments/
+/remote_staging/
+
+# Small fixture required by test_hf868_scene.py
+/results/*
+!/results/extrinsics_hf868.json

@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=71"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "so101-workspace"
+version = "0.1.0"
+description = "Local SO-101 MuJoCo grasping workspace"
+requires-python = ">=3.12"
+dependencies = [
+  "mujoco>=3.0,<4",
+  "numpy>=2.0,<3",
+  "scipy>=1.10",
+  "pyyaml>=6.0",
+  "pynput>=1.7.7",
+  "lerobot[core_scripts,training,feetech]",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 110
+
+[tool.uv.sources]
+lerobot = { path = "third_party/lerobot_v061", editable = true }
+
+[project.optional-dependencies]
+gamepad = ["lerobot[gamepad,kinematics]"]
+dev = [
+  "pytest>=8.1",
+  "ruff>=0.1",
+]

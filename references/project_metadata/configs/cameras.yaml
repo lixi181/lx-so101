@@ -1,0 +1,28 @@
+# 真实相机配置。
+#
+# intrinsics 指向 configs/camera/<目录>/intrinsics.yaml（标注版，供本工作区读取），
+# 同目录的 ost.yaml 是 ROS usb_cam 的 camera_info_url 格式，两者数值一致，
+# 并由 tests/test_camera_model.py 守住。
+cameras:
+  top:
+    type: usb_uvc
+    device: /dev/video0            # udev 的 /dev/forklift_artag_camera 目前指向错误的
+                                   # video1（metadata）节点，先直接用 video0
+    vendor_id: 0x05a3
+    product_id: 0x9240
+    width: 640
+    height: 480
+    # YUYV 在该分辨率下只支持 30.5 fps；要更高帧率必须切 MJPG（可到 120 fps）
+    pixel_format: yuyv
+    fps: 30
+    intrinsics: camera/hf868_135_640x480
+    role: 机械臂顶部相机（原为叉车托盘二维码相机）
+    extrinsics: null               # 尚未做手眼标定
+
+# 其他格式示例：
+#   front:
+#     type: opencv
+#     index_or_path: 0
+#     width: 640
+#     height: 480
+#     fps: 30
